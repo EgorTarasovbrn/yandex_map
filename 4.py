@@ -8,6 +8,7 @@ x, y = 133.795393, -25.694776
 xm, ym = 32, 32
 sloi = ['map', 'sat','skl']
 index_map = 0
+
 map_request = f"http://static-maps.yandex.ru/1.x/?ll={x},{y}&spn={xm},{ym}&l=map"
 response = requests.get(map_request)
 
@@ -20,6 +21,8 @@ if not response:
 
 
 def map():
+    map_request = f"http://static-maps.yandex.ru/1.x/?ll={x},{y}&spn={xm},{ym}&l={sloi[index_map]}"
+    response = requests.get(map_request)
     with open(map_file, "wb") as file:
         file.write(response.content)
     pygame.init()
@@ -35,29 +38,40 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_PAGEUP:
-                if xm <= 32 and ym <= 32:
-                    xm = int(xm * 2)
-                    ym = int(ym * 2)
-                    map_request = f"http://static-maps.yandex.ru/1.x/?ll={x},{y}&spn={xm},{ym}&l={sloi[index_map]}"
-                    response = requests.get(map_request)
-                    map()
-            elif event.key == pygame.K_PAGEDOWN:
-                if xm >= 3 and ym >= 3:
-                    xm = int(xm // 2)
-                    ym = int(ym // 2)
-                    map_request = f"http://static-maps.yandex.ru/1.x/?ll={x},{y}&spn={xm},{ym}&l={sloi[index_map]}"
-                    response = requests.get(map_request)
-                    map()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 index_map += 1
                 if index_map > 2:
                     index_map = 0
-                map_request = f'http://static-maps.yandex.ru/1.x/?ll={x},{y}&spn={xm},{ym}&l={sloi[index_map]}'
-                response = requests.get(map_request)
                 map()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_PAGEUP:
+                if xm <= 32 and ym <= 32:
+                    xm = int(xm * 2)
+                    ym = int(ym * 2)
+                    map()
+            elif event.key == pygame.K_PAGEDOWN:
+                if xm >= 3 and ym >= 3:
+                    xm = int(xm // 2)
+                    ym = int(ym // 2)
+                    map()
+            elif event.key == pygame.K_UP:
+                if y < 60:
+                    y += 10
+                    map()
+            elif event.key == pygame.K_DOWN:
+                if y > -60:
+                    y -= 10
+                    map()
+            elif event.key == pygame.K_RIGHT:
+                if x < 150:
+                    x += 10
+                    map()
+            elif event.key == pygame.K_LEFT:
+                if x > -80:
+                    x -= 10
+                    map()
+
 
 pygame.quit()
 
